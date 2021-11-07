@@ -35,11 +35,10 @@ class Keccak {
         uint64_t w[25]; // The lane of 64-bit 5 * 5 = 25 words. Also b = 25w = 1600
     } st; // state
 
-    int pt, rsiz;
-    int mdlen = 25; // mdlen = hash output in bytes
+    int pt, rsiz, mdlen; // mdlen = hash output in bytes
   public:
-    Keccak(const void *in, void *md, int mdlen);
-    int Init();
+    Keccak(const void *in, size_t in_len, void *md, int _mdlen);
+    int Init(int _mdlen);
     int Update(const void *data, size_t len);
     int Finalize(void *md);
     int Reset();

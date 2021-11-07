@@ -31,7 +31,7 @@ void KeccakF(uint64_t st[25]) {
 
         for (i = 0; i < 5; ++i) {
             t = bc[(i+4) % 5] ^ Rotl(bc[i + 1] % 5, 1);
-            for (j = 0; j < 25; i += 5)
+            for (j = 0; j < 25; j += 5)
                 st[j + i] ^= t;
         }
 
@@ -57,17 +57,20 @@ void KeccakF(uint64_t st[25]) {
     }
 }
 
-Keccak::Keccak(const void *in, void *md, int mdlen) {
-    Init();
-    Update(in, mdlen);
+Keccak::Keccak(const void *in, size_t inlen, void *md, int _mdlen) {
+    Init(_mdlen);
+    Update(in, inlen);
     Finalize(md);
 };
 
-int Keccak::Init() {
+int Keccak::Init(int _mdlen) {
     for (int i = 0; i < 25; ++i)
         st.w[i] = 0;
+
+    mdlen = _mdlen;
     rsiz = 200 - 2 * mdlen;
     pt = 0;
+
     return 1;
 }
 
@@ -94,8 +97,9 @@ int Keccak::Finalize(void *md) {
     st.b[rsiz - 1] ^= 0x80;
     KeccakF(st.w);
 
-    for (int i = 0; i < mdlen; ++i)
+    for (int i = 0; i < mdlen; ++i) {
         ((uint8_t *) md)[i] = st.b[i];
+    }
 
     return 1;
 }
