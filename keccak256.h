@@ -1,18 +1,20 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
+#include <vector>
 
 // round
 // The sequence of step mappigs that is iterated
 // inthe calculation of a KECCAK-p permutation
-static constexpr uint64_t ROUND = 24;
+static constexpr int ROUNDS = 24;
 
 // keccak round constant
 // For each round of a KECCAK-p permutation, a lane value that is
 // determined by the round index. The round constant is the second input to
 // the ι step mapping.
-static constexpr std::array<std::uint64_t, ROUND> ROUND_CONSTANTS {
+static constexpr std::array<std::uint64_t, ROUNDS> RNDC {
      0x0000000000000001ULL, 0x0000000000008082ULL, 0x800000000000808aULL,
      0x8000000080008000ULL, 0x000000000000808bULL, 0x0000000080000001ULL,
      0x8000000080008081ULL, 0x8000000000008009ULL, 0x000000000000008aULL,
@@ -23,11 +25,22 @@ static constexpr std::array<std::uint64_t, ROUND> ROUND_CONSTANTS {
      0x8000000000008080ULL, 0x0000000080000001ULL, 0x8000000080008008ULL
 };
 
+// Keccack-f[b] transform. b = 25w = 1600
+void KeccakF(uint64_t st[25]);
+
 class Keccak {
-  public:
-    Keccak();
   private:
-    int init();
-    int update();
-    int final();
+    union {
+        uint8_t b[200]; // The width of a KECCAK-p permutation in bits
+        uint64_t w[25]; // The lane of 64-bit 5 * 5 = 25 words. Also b = 25w = 1600
+    } st; // state
+
+    int pt, rsiz;
+    int mdlen = 25; // mdlen = hash output in bytes
+  public:
+    Keccak(const void *in, void *md, int mdlen);
+    int Init();
+    int Update(const void *data, size_t len);
+    int Finalize(void *md);
+    int Reset();
 };
