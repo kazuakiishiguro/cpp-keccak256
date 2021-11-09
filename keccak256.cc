@@ -79,7 +79,7 @@ int Keccak::Update(const void *data, size_t len) {
     int j;
     j = pt;
 
-    for (int i = 0; i < len; ++i) {
+    for (i = 0; i < len; ++i) {
         st.b[++j] ^= ((const uint8_t *) data)[i];
         if (j >= rsiz) {
             KeccakF(st.w);
