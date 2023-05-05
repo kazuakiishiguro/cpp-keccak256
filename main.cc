@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <iostream>
 #include <cstring>
+#include <ostream>
 
 #include "keccak256.h"
 
@@ -59,6 +60,12 @@ int main(int argc, char **argv) {
 
   if (fails == 0) {
     std::cout << "ok" << std::endl;
+  } else {
+    std::cout << fails <<  ": something happened" << std::endl;
+    std::cout << sha << std::endl;
+    std::cout << msg_len << std::endl;
+    std::cout << buf << std::endl;
+    std::cout << sha_len << std::endl;
   }
 
   return 0;
