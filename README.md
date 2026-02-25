@@ -2,5 +2,5 @@
 
 This is a keccak256 hashing function with C++ builder.
 
-Based on [FIPS PUB 202](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf) implementation.
+Based on the [Keccak reference](https://keccak.team/files/Keccak-reference-3.0.pdf) (original Keccak, 0x01 padding).
 

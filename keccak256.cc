@@ -30,7 +30,7 @@ void KeccakF(uint64_t st[25]) {
       bc[i] = st[i] ^ st[i + 5] ^ st[i + 10] ^ st[i + 15] ^ st[i + 20];
 
     for (i = 0; i < 5; ++i) {
-      t = bc[(i+4) % 5] ^ Rotl(bc[i + 1] % 5, 1);
+      t = bc[(i+4) % 5] ^ Rotl(bc[(i + 1) % 5], 1);
       for (j = 0; j < 25; j += 5)
         st[j + i] ^= t;
     }
@@ -47,7 +47,7 @@ void KeccakF(uint64_t st[25]) {
     // χ step
     for (j = 0; j < 25; j +=5) {
       for (i = 0; i < 5; ++i)
-        bc[0] = st[j * i];
+        bc[i] = st[j + i];
       for (i = 0; i < 5; ++i)
         st[j + i] ^= (~bc[(i + 1) % 5]) & bc[(i + 2) % 5];
     }
@@ -80,7 +80,7 @@ int Keccak::Update(const void *data, size_t len) {
   j = pt;
 
   for (i = 0; i < len; ++i) {
-    st.b[++j] ^= ((const uint8_t *) data)[i];
+    st.b[j++] ^= ((const uint8_t *) data)[i];
     if (j >= rsiz) {
       KeccakF(st.w);
       j = 0;
@@ -93,7 +93,7 @@ int Keccak::Update(const void *data, size_t len) {
 }
 
 int Keccak::Finalize(void *md) {
-  st.b[pt] ^= 0x06;
+  st.b[pt] ^= 0x01;
   st.b[rsiz - 1] ^= 0x80;
   KeccakF(st.w);
 

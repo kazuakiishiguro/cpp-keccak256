@@ -41,5 +41,5 @@ class Keccak {
   int Init(int _mdlen);
   int Update(const void *data, size_t len);
   int Finalize(void *md);
-  int Reset();
+  int Reset() { return Init(mdlen); }
 };
