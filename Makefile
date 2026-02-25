@@ -1,12 +1,27 @@
 NAME = keccak256
-SRC = keccak256.cc
-OBJS = test.o
+LIB = libkeccak256.a
 
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall
 
-$(NAME): $(OBJS) $(SRC)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+.PHONY: all test clean
+
+all: $(LIB) $(NAME)
+
+$(LIB): keccak256.o
+	ar rcs $@ $^
+
+$(NAME): test.o $(LIB)
+	$(CXX) $(CXXFLAGS) -o $@ test.o -L. -lkeccak256
+
+keccak256.o: keccak256.cc keccak256.h
+	$(CXX) $(CXXFLAGS) -c -o $@ keccak256.cc
+
+test.o: test.cc keccak256.h
+	$(CXX) $(CXXFLAGS) -c -o $@ test.cc
+
+test: $(NAME)
+	./$(NAME)
 
 clean:
-	rm -f $(OBJS) $(NAME)
+	rm -f *.o $(LIB) $(NAME)
